@@ -90,6 +90,8 @@ unset(CMAKE_REQUIRED_INCLUDES)
 # engine/common/build.c
 if(XASH_ANDROID)
 	set(BUILDOS "android")
+elseif(XASH_IOS)
+	set(BUILDOS "ios")
 elseif(XASH_WIN32 OR XASH_LINUX OR XASH_APPLE)
 	set(BUILDOS "") # no prefix for default OS
 elseif(XASH_FREEBSD)
@@ -219,4 +221,3 @@ macro(set_target_postfix_with_name target name)
 		set_target_properties(${target} PROPERTIES PREFIX "")
 	endif()
 endmacro()
-
