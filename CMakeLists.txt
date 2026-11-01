@@ -77,6 +77,32 @@ if(BUILD_SERVER)
 		set_target_postfix(yapb)
 	endif()
 
+	# ReGameDLL's optional filesystem interface can be unavailable on iOS.
+	# Keep training startup safe while preserving file filtering when available.
+	set(REGAMEDLL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ReGameDLL_CS")
+	set(REGAMEDLL_PATCH
+		"${CMAKE_CURRENT_SOURCE_DIR}/patches/regamedll-filesystem-null.patch")
+	file(READ
+		"${REGAMEDLL_DIR}/regamedll/dlls/bot/cs_bot_chatter.cpp"
+		REGAMEDLL_CHATTER_SOURCE)
+	string(FIND "${REGAMEDLL_CHATTER_SOURCE}"
+		"if (g_pFileSystem && !g_pFileSystem->FileExists(filePath))"
+		REGAMEDLL_PATCHED)
+	if(REGAMEDLL_PATCHED EQUAL -1)
+		execute_process(
+			COMMAND git apply --whitespace=nowarn "${REGAMEDLL_PATCH}"
+			WORKING_DIRECTORY "${REGAMEDLL_DIR}"
+			RESULT_VARIABLE REGAMEDLL_PATCH_RESULT
+			OUTPUT_VARIABLE REGAMEDLL_PATCH_OUTPUT
+			ERROR_VARIABLE REGAMEDLL_PATCH_ERROR
+		)
+		if(NOT REGAMEDLL_PATCH_RESULT EQUAL 0)
+			message(FATAL_ERROR
+				"Failed to apply ReGameDLL iOS safety patch:\n"
+				"${REGAMEDLL_PATCH_OUTPUT}${REGAMEDLL_PATCH_ERROR}")
+		endif()
+	endif()
+
 	set(XASH_COMPAT ON CACHE BOOL "" FORCE)
 	add_subdirectory(3rdparty/ReGameDLL_CS)
 	yy_thunks_apply(regamedll)

@@ -82,18 +82,32 @@ cd android
 ```
 
 ### iOS
-The iOS build produces an arm64 `client_ios_arm64.dylib` for use by Xash3D
-FWGS. The dylib is intentionally not signed by this project.
+The iOS build produces an arm64 `client_ios_arm64.dylib` and a matching
+`client_ios_arm64.dylib.dSYM` for use by Xash3D FWGS. The dylib is
+intentionally not signed by this project; the dSYM is only for symbolication
+and must not be copied into the app.
 
-If you use SideStore, add the unsigned dylib to the Xash app
-project (preferably under the app's `Frameworks` directory), make Xash resolve
-that path from its bundle, and let SideStore sign the complete IPA. SideStore's
-final signing pass can then sign the app and its nested dylib with the same
-provisioning identity.
+The dSYM is included in the generated package under `dSYMs/`. Use the exact
+dSYM from the same build as the dylib when symbolizing a crash.
+
+If you use SideStore, add the unsigned dylib to the Xash app bundle at the
+relative path configured by your Xash fork (normally
+`cstrike/cl_dlls/client_ios_arm64.dylib`), then let SideStore sign the complete
+IPA. SideStore's final signing pass can then sign the app and its nested dylib
+with the same provisioning identity.
 
 The standalone plugin build cannot replace signing the host app. A dylib
 downloaded independently may still be distributed as a separate file, but it
 must be inserted into the app before SideStore signs it; signing it afterward
-does not update the app's signed bundle. The Xash loader must also stop trying
-to load the copy from `Documents`, or use that only as a fallback after the
-bundle copy has been loaded successfully.
+does not update the app's signed bundle. Remove stale copies from writable
+storage while testing so you know which signed bundle dylib is being loaded.
+
+This project only provides symbols for the client dylib. The Xash executable
+and any other bundled dylibs need matching dSYMs from the Xash build itself.
+
+The `Crash: signal ...` text shown by Xash is not a full iOS crash dump, and
+Xash does not load dSYMs at runtime. For the actual exception type, thread
+stacks, and loaded-image UUIDs, collect the device crash report from Xcode's
+Devices and Simulators window (or macOS Console), then symbolicate it with
+the matching Xash and client dSYMs. The crash report must contain the client
+dylib's UUID before its addresses can be resolved.
