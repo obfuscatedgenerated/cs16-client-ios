@@ -184,6 +184,21 @@
         "value": "arm64",
         "strategy": "external"
       }
+    },
+    {
+      "name": "ios-ci-arm64",
+      "displayName": "iOS CI - arm64",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_SYSROOT": "iphoneos",
+        "CMAKE_C_COMPILER_LAUNCHER": "ccache",
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache",
+        "MAINUI_USE_STB": "ON"
+      },
+      "binaryDir": "${sourceDir}/build"
     }
   ]
 }

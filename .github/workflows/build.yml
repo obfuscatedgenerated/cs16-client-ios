@@ -1,5 +1,8 @@
 name: Build and Deploy
-on: [ push, pull_request ]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: continuous
@@ -235,11 +238,41 @@ jobs:
         with:
           name: ${{ runner.os }}-${{ matrix.arch }}
           path: build/*.zip
+  ios:
+    name: iOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: Install dependencies
+        run: brew install cmake ninja ccache
+      - name: Setup compilation cache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ runner.os }}-ios-arm64-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-ios-arm64-ccache-${{ github.ref_name }}
+            ${{ runner.os }}-ios-arm64-ccache-
+      - name: Configure
+        run: cmake --preset ios-ci-arm64
+      - name: Build and Package
+        run: |
+          cmake --build .
+          cpack --config CPackConfig.cmake
+        working-directory: build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-arm64
+          path: build/*.zip
   release:
     name: Release
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && always()
-    needs: [ android, windows, linux, psvita, macos ]
+    needs: [ android, windows, linux, psvita, macos, ios ]
     steps:
       - name: Fetch artifacts
         uses: actions/download-artifact@v4
