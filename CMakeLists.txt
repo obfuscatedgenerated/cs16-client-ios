@@ -18,6 +18,7 @@ endif()
 option(BUILD_CLIENT "Build client library." ON)
 option(BUILD_MAINUI "Build menu library." ON)
 option(BUILD_SERVER "Build server library." ON)
+option(BUILD_YAPB "Build the YaPB server plugin." ON)
 option(ENABLE_YY_THUNKS "Enable YY-Thunks for Windows XP compatibility." ON)
 
 set(GAME_DIR "cstrike" CACHE STRING "Game directory name.")
@@ -63,16 +64,18 @@ if(BUILD_SERVER)
 	else()
 		set(YAPB_64BIT OFF CACHE BOOL "Build as 64-bit binary" FORCE)
 	endif()
-	add_subdirectory(3rdparty/yapb)
+	if(BUILD_YAPB)
+		add_subdirectory(3rdparty/yapb)
 
-	if(MSVC)
-		# Limit YaPB to one concurrent compile job because MSVC shares one
-		# compiler PDB between all source files of this target.
-		set_property(GLOBAL APPEND PROPERTY JOB_POOLS yapb_compile_pool=1)
-		set_property(TARGET yapb PROPERTY JOB_POOL_COMPILE yapb_compile_pool)
-    endif()
+		if(MSVC)
+			# Limit YaPB to one concurrent compile job because MSVC shares one
+			# compiler PDB between all source files of this target.
+			set_property(GLOBAL APPEND PROPERTY JOB_POOLS yapb_compile_pool=1)
+			set_property(TARGET yapb PROPERTY JOB_POOL_COMPILE yapb_compile_pool)
+		endif()
 
-	set_target_postfix(yapb)
+		set_target_postfix(yapb)
+	endif()
 
 	set(XASH_COMPAT ON CACHE BOOL "" FORCE)
 	add_subdirectory(3rdparty/ReGameDLL_CS)
