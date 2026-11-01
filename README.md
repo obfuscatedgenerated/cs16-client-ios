@@ -83,11 +83,17 @@ cd android
 
 ### iOS
 The iOS build produces an arm64 `client_ios_arm64.dylib` for use by Xash3D
-FWGS. The CI iOS package ad-hoc signs this dylib with Apple's `codesign`
-before packaging it, so no Mac is required locally.
+FWGS. The dylib is intentionally not signed by this project.
 
-This is only a standalone ad-hoc signature. It does not make the dylib
-universally trusted or replace signing the Xash app with the user's own
-SideStore identity. If Xash still rejects the library when it is loaded from
-the game directory, the Xash iOS loader must be changed to permit that
-location or the dylib must be embedded in the signed app bundle.
+If you use SideStore, add the unsigned dylib to the Xash app
+project (preferably under the app's `Frameworks` directory), make Xash resolve
+that path from its bundle, and let SideStore sign the complete IPA. SideStore's
+final signing pass can then sign the app and its nested dylib with the same
+provisioning identity.
+
+The standalone plugin build cannot replace signing the host app. A dylib
+downloaded independently may still be distributed as a separate file, but it
+must be inserted into the app before SideStore signs it; signing it afterward
+does not update the app's signed bundle. The Xash loader must also stop trying
+to load the copy from `Documents`, or use that only as a fallback after the
+bundle copy has been loaded successfully.
