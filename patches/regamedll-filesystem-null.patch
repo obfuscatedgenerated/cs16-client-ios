@@ -1,0 +1,13 @@
+diff --git a/regamedll/dlls/bot/cs_bot_chatter.cpp b/regamedll/dlls/bot/cs_bot_chatter.cpp
+index ccba21e..6ed9a63 100644
+--- a/regamedll/dlls/bot/cs_bot_chatter.cpp
++++ b/regamedll/dlls/bot/cs_bot_chatter.cpp
+@@ -627,7 +627,7 @@ bool BotPhraseManager::Initialize(const char *filename, int bankIndex)
+ #ifdef REGAMEDLL_ADD
+ 				Q_snprintf(filePath, sizeof(filePath), "sound\\%s%s", baseDir, token);
+ 
+-				if (!g_pFileSystem->FileExists(filePath))
++				if (g_pFileSystem && !g_pFileSystem->FileExists(filePath))
+ 					continue;
+ #endif
+ 
