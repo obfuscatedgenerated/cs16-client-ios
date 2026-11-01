@@ -184,6 +184,20 @@
         "value": "arm64",
         "strategy": "external"
       }
+    },
+    {
+      "name": "ios-ci-arm64",
+      "displayName": "iOS CI - arm64",
+      "generator": "Ninja",
+      "toolchainFile": "${sourceDir}/toolchains/ios-arm64.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_C_COMPILER_LAUNCHER": "ccache",
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache",
+        "MAINUI_USE_STB": "ON",
+        "BUILD_YAPB": "OFF"
+      },
+      "binaryDir": "${sourceDir}/build"
     }
   ]
 }
