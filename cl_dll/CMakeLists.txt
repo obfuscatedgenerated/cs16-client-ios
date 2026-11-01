@@ -77,6 +77,14 @@ add_library(${CLIENT_LIB} SHARED ${CS_CLIENT_SRC})
 
 set_target_postfix(${CLIENT_LIB})
 
+if(IOS_ADHOC_SIGN AND CMAKE_SYSTEM_NAME STREQUAL "iOS")
+	add_custom_command(TARGET ${CLIENT_LIB} POST_BUILD
+		COMMAND codesign --force --sign - --timestamp=none
+			"$<TARGET_FILE:${CLIENT_LIB}>"
+		VERBATIM
+	)
+endif()
+
 install(TARGETS ${CLIENT_LIB}
 	DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
