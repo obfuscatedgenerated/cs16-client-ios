@@ -80,3 +80,14 @@ cmake --install build --prefix <path-to-your-installation>
 cd android
 ./gradlew assembleRelease
 ```
+
+### iOS
+The iOS build produces an arm64 `client_ios_arm64.dylib` for use by Xash3D
+FWGS. The CI iOS package ad-hoc signs this dylib with Apple's `codesign`
+before packaging it, so no Mac is required locally.
+
+This is only a standalone ad-hoc signature. It does not make the dylib
+universally trusted or replace signing the Xash app with the user's own
+SideStore identity. If Xash still rejects the library when it is loaded from
+the game directory, the Xash iOS loader must be changed to permit that
+location or the dylib must be embedded in the signed app bundle.

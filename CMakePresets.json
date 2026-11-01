@@ -195,7 +195,8 @@
         "CMAKE_C_COMPILER_LAUNCHER": "ccache",
         "CMAKE_CXX_COMPILER_LAUNCHER": "ccache",
         "MAINUI_USE_STB": "ON",
-        "BUILD_YAPB": "OFF"
+        "BUILD_YAPB": "OFF",
+        "IOS_ADHOC_SIGN": "ON"
       },
       "binaryDir": "${sourceDir}/build"
     }

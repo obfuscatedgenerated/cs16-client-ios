@@ -20,6 +20,7 @@ option(BUILD_MAINUI "Build menu library." ON)
 option(BUILD_SERVER "Build server library." ON)
 option(BUILD_YAPB "Build the YaPB server plugin." ON)
 option(ENABLE_YY_THUNKS "Enable YY-Thunks for Windows XP compatibility." ON)
+option(IOS_ADHOC_SIGN "Ad-hoc sign installed iOS dynamic libraries." OFF)
 
 set(GAME_DIR "cstrike" CACHE STRING "Game directory name.")
 set(CLIENT_INSTALL_DIR "cl_dlls" CACHE STRING "Client library location.")
